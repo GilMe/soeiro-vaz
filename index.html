@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Soeiro Vaz na Terra da Pimenta</title>
+<style>
+  html, body { margin:0; height:100%; background:#08080a; overflow:hidden;
+               font-family:"Courier New", monospace; touch-action:none; }
+  #wrap  { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  #stage { position:relative; }
+  canvas { display:block; }
+  /* CRT: a whisper of scanline and a soft vignette — flavour, not filter */
+  #crt { position:absolute; inset:0; pointer-events:none;
+         background:repeating-linear-gradient(to bottom,
+           rgba(0,0,0,.05) 0px, rgba(0,0,0,.05) 1px,
+           rgba(0,0,0,0)   1px, rgba(0,0,0,0)   4px);
+         box-shadow: inset 0 0 90px rgba(0,0,0,.45); }
+  #boot { position:absolute; inset:0; z-index:9; cursor:pointer; background:#000; color:#b9b5a9;
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          gap:14px; text-align:center; letter-spacing:2px; font-size:13px; }
+  #boot b { color:#e8dcae; font-size:15px; letter-spacing:3px; font-weight:normal; }
+  #boot i { color:#6f6c66; font-style:normal; font-size:11px; letter-spacing:1px; }
+</style>
+</head>
+<body>
+  <div id="wrap"><div id="stage">
+    <canvas id="screen"></canvas>
+    <div id="crt"></div>
+    <div id="boot">
+      <b>SOEIRO VAZ NA TERRA DA PIMENTA</b>
+      <span>Lisboa, Setembro de 1499</span>
+      <i>clica para começar &nbsp;·&nbsp; TAB traduz &nbsp;·&nbsp; rato ao topo abre o menu</i>
+    </div>
+  </div></div>
+  <script type="module" src="./src/game.js"></script>
+</body>
+</html>
