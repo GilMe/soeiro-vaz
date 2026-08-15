@@ -197,6 +197,12 @@ export class UI {
       fill(ctx, (W - w) / 2 | 0, BAR_H + 2, w, 11, 'rgba(0,0,0,.55)');
       text(ctx, label, ((W - w) / 2 | 0) + 4, BAR_H + 4, '#ffe9a8');
     }
+    // The current verb, anchored bottom-left where the eyes live during play.
+    const v = VERBS.find(x => x.id === this.verb);
+    fill(ctx, 2, H - 16, 58, 14, 'rgba(8,6,4,.6)');
+    fill(ctx, 2, H - 16, 58, 1, 'rgba(255,232,170,.25)');
+    icon(ctx, v.id, 4, H - 15, 1, '#f0e6c8', '#2b2117');
+    text(ctx, v.label, 18, H - 12, '#ffe9a8', '7px "Courier New", monospace');
     // One-time tip until the player finds the right mouse button.
     if (!game.flags.usouVerbo) {
       const tip = 'botao direito muda a accao';
