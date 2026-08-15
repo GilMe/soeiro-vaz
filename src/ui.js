@@ -144,37 +144,33 @@ const DICA_X = MENU_X + BTN_W + BTN_GAP;
 export class UI {
   constructor() {
     this.verb = 'andar';
-    this.barOpen = false;
     this.msg = null;          // { pt, en, speaker }
     this.gloss = false;       // Tab toggles the English crib
     this.invOpen = false;
     this.hover = '';
   }
 
-  barHeight() { return this.barOpen ? BAR_H : 0; }
+  barHeight() { return BAR_H; }
 
   // --- input ---------------------------------------------------------------
-  // Returns true if the UI consumed the click.
+  // Returns true if the UI consumed the click. The bar is permanent: clicks
+  // on it are UI, clicks below it belong to the scene.
   click(x, y, game) {
     if (this.msg) { this.msg = null; return true; }
-    if (this.barOpen) {
-      if (y < BAR_H) {
-        for (let i = 0; i < VERBS.length; i++) {
-          const bx = bx_(i);
-          if (x >= bx && x < bx + BTN_W) { this.verb = VERBS[i].id; game.audio.sfx('step'); return true; }
-        }
-        if (x >= SACO_X && x < SACO_X + BTN_W) { this.invOpen = !this.invOpen; return true; }
-        if (x >= MENU_X && x < MENU_X + BTN_W) { this.menuRequested = true; return true; }
-        if (x >= DICA_X && x < DICA_X + BTN_W) { this.hintRequested = true; return true; }
-        return true;
+    if (y < BAR_H) {
+      for (let i = 0; i < VERBS.length; i++) {
+        const bx = bx_(i);
+        if (x >= bx && x < bx + BTN_W) { this.verb = VERBS[i].id; game.audio.sfx('step'); return true; }
       }
-      this.barOpen = false;
+      if (x >= SACO_X && x < SACO_X + BTN_W) { this.invOpen = !this.invOpen; return true; }
+      if (x >= MENU_X && x < MENU_X + BTN_W) { this.menuRequested = true; return true; }
+      if (x >= DICA_X && x < DICA_X + BTN_W) { this.hintRequested = true; return true; }
       return true;
     }
     return false;
   }
 
-  move(x, y) { if (y < 10) this.barOpen = true; }
+  move() {}
 
   // Right-click cycles the verb — how anyone actually played an SCI game.
   cycleVerb() {
@@ -186,37 +182,29 @@ export class UI {
 
   // --- drawing -------------------------------------------------------------
   draw(ctx, game) {
-    if (this.barOpen) this._bar(ctx, game);
-    else this._status(ctx, game);
+    this._bar(ctx, game);
+    this._status(ctx, game);
     if (this.invOpen) this._inv(ctx, game);
     if (this.msg) this._msg(ctx, game);
   }
 
   _status(ctx, game) {
-    // Hovered-object label, centred at the top the way SCI did it.
+    // Hovered-object label, centred just under the permanent bar.
     if (this.hover) {
       const label = this.hover;
       ctx.font = '8px "Courier New", monospace';
       const w = ctx.measureText(label).width + 8;
-      fill(ctx, (W - w) / 2 | 0, 2, w, 11, 'rgba(0,0,0,.55)');
-      text(ctx, label, ((W - w) / 2 | 0) + 4, 4, '#ffe9a8');
+      fill(ctx, (W - w) / 2 | 0, BAR_H + 2, w, 11, 'rgba(0,0,0,.55)');
+      text(ctx, label, ((W - w) / 2 | 0) + 4, BAR_H + 4, '#ffe9a8');
     }
-    // The current verb, always visible — otherwise you can't tell what mode
-    // you're in, which is exactly how you end up unable to do anything.
-    const v = VERBS.find(x => x.id === this.verb);
-    fill(ctx, 2, H - 16, 58, 14, 'rgba(8,6,4,.6)');
-    fill(ctx, 2, H - 16, 58, 1, 'rgba(255,232,170,.25)');
-    icon(ctx, v.id, 4, H - 15, 1, '#f0e6c8', '#2b2117');
-    text(ctx, v.label, 18, H - 12, '#ffe9a8', '7px "Courier New", monospace');
-    // The debt sits where a score would in any other game.
-    const label = game.flags.usouVerbo
-      ? `DÍVIDA ${game.debt} rs`
-      : 'botao direito muda a accao';
-    ctx.font = '7px "Courier New", monospace';
-    const w = ctx.measureText(label).width + 8;
-    fill(ctx, W - w - 2, H - 12, w, 10, 'rgba(0,0,0,.55)');
-    text(ctx, label, W - w + 2, H - 11,
-         game.flags.usouVerbo ? '#e88a7a' : '#a8c894', '7px "Courier New", monospace');
+    // One-time tip until the player finds the right mouse button.
+    if (!game.flags.usouVerbo) {
+      const tip = 'botao direito muda a accao';
+      ctx.font = '7px "Courier New", monospace';
+      const w = ctx.measureText(tip).width + 8;
+      fill(ctx, W - w - 2, H - 12, w, 10, 'rgba(0,0,0,.55)');
+      text(ctx, tip, W - w + 2, H - 11, '#a8c894', '7px "Courier New", monospace');
+    }
   }
 
   _bar(ctx, game) {
