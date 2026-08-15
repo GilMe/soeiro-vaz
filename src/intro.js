@@ -11,25 +11,25 @@ const BEATS = [
   { img: 'assets/intro/lisboa-panorama.png',
     pt: 'Lisboa. Setembro de 1499.',
     en: 'Lisbon. September 1499.' },
-  { img: 'assets/intro/partida-da-frota.png',
+  { img: 'assets/intro/partida-da-frota.png', pos: 'top',
     pt: 'Há dois anos, Vasco da Gama partiu para a Índia. Toda a gente dizia que era o futuro.',
     en: 'Two years ago Vasco da Gama sailed for India. Everyone said it was the future.' },
   { img: 'assets/intro/taberna.png',
     pt: 'Tu disseste que ele morria no mar. Disseste alto. Disseste na taberna. Disseste a toda a gente que parou para ouvir, e a algumas que não pararam.',
     en: 'You said he would die at sea. You said it loudly. You said it in the tavern. You said it to everyone who stopped to listen, and to several who did not.' },
-  { img: 'assets/intro/aritmetica.png',
+  { img: 'assets/intro/aritmetica.png', pos: 'top',
     pt: 'Tinhas feito as contas.',
     en: 'You had done the arithmetic.' },
   { img: 'assets/intro/compra-da-malagueta.png',
     pt: 'Por isso pediste quatro mil reais ao Bastião Ruivo e compraste toda a malagueta de Lisboa. Porque quando a frota falhasse, a malagueta era a única pimenta da Europa — e era tua.',
     en: 'So you borrowed four thousand reais from Bastião Ruivo and bought every grain of malagueta in Lisbon. Because when the fleet failed, malagueta would be the only pepper in Europe — and it would be yours.' },
-  { img: 'assets/intro/regresso.png',
+  { img: 'assets/intro/regresso.png', pos: 'top',
     pt: 'O Gama voltou esta manhã.',
     en: 'Gama came back this morning.' },
-  { img: 'assets/intro/regresso.png',
+  { img: 'assets/intro/regresso.png', pos: 'top',
     pt: 'Tens onze toneladas da pimenta errada. Tens uma dívida. E tens uma senhoria que triplicou a renda, porque agora a Ribeira é outra coisa.',
     en: 'You have eleven tons of the wrong pepper. You have a debt. And you have a landlady who has tripled the rent, because the Ribeira is different now.' },
-  { img: 'assets/intro/regresso.png',
+  { img: 'assets/intro/regresso.png', pos: 'top',
     pt: 'O mercado ainda não estava preparado.',
     en: "The market wasn't ready." },
 ];
@@ -97,10 +97,10 @@ function backdrop(ctx, t) {
 // to land. Stills are optional (assets/outro/) — beats without a loaded image
 // play over the painted dusk.
 export const OUTRO_BEATS = [
-  { img: 'assets/intro/partida-da-frota.png',
+  { img: 'assets/intro/partida-da-frota.png', pos: 'top',
     pt: 'A 9 de Março de 1500, a armada de Pedro Álvares Cabral larga de Belém. Treze naus. A maior que Portugal alguma vez mandou ao mar.',
     en: 'On 9 March 1500, the fleet of Pedro Álvares Cabral sails from Belém. Thirteen ships. The largest Portugal has ever sent to sea.' },
-  { img: 'assets/intro/partida-da-frota.png',
+  { img: 'assets/intro/partida-da-frota.png', pos: 'top',
     pt: 'Tu vais numa delas. No porão, com o capital de toda a gente que conheces e um peixe seco que te deu uma peixeira.',
     en: 'You are aboard one of them. In the hold, with the capital of everyone you know and a dried fish a fishwife gave you.' },
   { img: 'assets/outro/porao.png',
@@ -178,7 +178,9 @@ export class Intro {
     const lines = wrap(ctx, b.pt, inner, '8px "Courier New", monospace');
     const gl = gloss ? wrap(ctx, b.en, inner, '8px "Courier New", monospace') : [];
     const bh = 16 + lines.length * 10 + (gl.length ? 7 + gl.length * 10 : 0) + 12;
-    const by = H - bh - 14;
+    // Each still declares where its empty space is: sky-heavy paintings take
+    // the card at the top, so the text never sits on the picture's subject.
+    const by = b.pos === 'top' ? 16 : H - bh - 14;
 
     ctx.globalAlpha = this.fade;
     panel(ctx, bx, by, bw, bh);
